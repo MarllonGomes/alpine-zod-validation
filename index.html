@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt_BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AlpineJS Validation</title>
+    <style>
+        .errored {
+            border: 1px solid red;
+        }
+
+        .success {
+            border: 1px solid green;
+        }
+    </style>
+</head>
+<body>
+
+<form
+    x-zvalidate="change"
+    x-data="{
+        zValidateSchema: $z.object({ name: $z.string().min(3) }),
+        name: '',
+        save() {
+            this.zvalidate.validate();
+        }
+    }"
+    @submit.prevent="save"
+>
+    <input
+        type="text"
+        x-model="name"
+        :class="{ errored: zvalidate.hasError('name'), success: zvalidate.isValid('name') }"
+    />
+
+    <span x-show="zvalidate.hasError('name')" x-text="zvalidate.getError('name')"></span>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script type="module" src="/src/main.mjs"></script>
+</body>
+</html>
