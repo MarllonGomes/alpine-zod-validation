@@ -1,6 +1,6 @@
 {
-  "name": "@mfgomess/alpinejsvalidate",
-  "version": "1.0.0",
+  "name": "@mfgomess/alpine-zod-validation",
+  "version": "0.0.1",
   "main": "builds/plugin.js",
   "type": "module",
   "baseUrl": ".",
@@ -15,10 +15,11 @@
   "description": "A alpinejs plugin that integrates zod validation",
   "dependencies": {
     "alpinejs": "^3.14.5",
-    "vite": "^6.0.2",
     "zod": "^3.23.8"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "vite": "^6.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/MarllonGomes/alpinejs-zod-validate.git"
