@@ -19,7 +19,15 @@ export default defineConfig({
                 },
             },
         },
-        minify: true
+        minify: true,
+        target: 'esnext',
+        outDir: 'dist',
+        emptyOutDir: true,
+        sourcemap: true,
+        brotliSize: false,
+        chunkSizeWarningLimit: 2000,
+        assetsInlineLimit: 4096,
+        cssCodeSplit: false,
     },
     server: {
         open: true,
