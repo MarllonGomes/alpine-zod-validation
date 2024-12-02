@@ -1,1 +1,0 @@
-{"version":3,"file":"zValidateCdn.cjs","sources":["../builds/cdn.js"],"sourcesContent":["import {zValidate} from \"../src/zValidate.js\";\r\n\r\ndocument.addEventListener('alpine:init', () => {\r\n    window.Alpine.plugin(zValidate)\r\n})"],"names":["zValidate"],"mappings":"yDAEA,SAAS,iBAAiB,cAAe,IAAM,CAC3C,OAAO,OAAO,OAAOA,WAAS,CAClC,CAAC"}

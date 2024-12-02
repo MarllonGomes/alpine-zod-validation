@@ -41,8 +41,8 @@ const zValidate = function (Alpine) {
             isValid(field) {
                 return this.successes.includes(field);
             },
-            hasError(field) {
-                return field in this.errors;
+            isInvalid(field) {
+                return Object.keys(this.errors).includes(field);
             },
             getError(field) {
                 return this.errors[field] ?? null;

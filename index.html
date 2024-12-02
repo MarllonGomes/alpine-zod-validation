@@ -17,10 +17,12 @@
 <body>
 
 <form
-    x-zvalidate="change"
+    style="display: flex; flex-direction: column; gap: 10px; width: 300px;"
+    x-zvalidate="input"
     x-data="{
-        zValidateSchema: $z.object({ name: $z.string().min(3) }),
+        zValidateSchema: $z.object({ name: $z.string().min(3), email: $z.string().email('Digite um e-mail válido') }),
         name: '',
+        email: '',
         save() {
             this.zvalidate.validate();
         }
@@ -29,11 +31,21 @@
 >
     <input
         type="text"
+        placeholder="nome"
         x-model="name"
-        :class="{ errored: zvalidate.hasError('name'), success: zvalidate.isValid('name') }"
+        :class="{ errored: zvalidate.isInvalid('name'), success: zvalidate.isValid('name') }"
     />
+    <span x-show="zvalidate.isInvalid('name')" x-text="zvalidate.getError('name')"></span>
+    <span x-show="zvalidate.isValid('name')" x-text="'successo'"></span>
 
-    <span x-show="zvalidate.hasError('name')" x-text="zvalidate.getError('name')"></span>
+    <input
+        type="text"
+        placeholder="email"
+        x-model="email"
+        :class="{ errored: zvalidate.isInvalid('email'), success: zvalidate.isValid('email') }"
+    />
+    <span x-show="zvalidate.isInvalid('email')" x-text="zvalidate.getError('email')"></span>
+    <span x-show="zvalidate.isValid('email')" x-text="'successo'"></span>
 
     <button type="submit">Submit</button>
 </form>

@@ -6,8 +6,8 @@ export default defineConfig({
     build: {
         lib: {
             entry: {
-                zValidateCdn: resolve(__dirname, 'builds/cdn.js'),
-                zValidatePlugin: resolve(__dirname, 'builds/plugin.js'),
+                cdn: resolve(__dirname, 'builds/cdn.js'),
+                plugin: resolve(__dirname, 'builds/plugin.js'),
             },
             name: 'zValidate',
         },
@@ -20,7 +20,7 @@ export default defineConfig({
             },
         },
         minify: true,
-        target: 'esnext',
+        target: 'es6',
         outDir: 'dist',
         emptyOutDir: true,
         sourcemap: true,
