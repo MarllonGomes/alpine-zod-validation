@@ -1,9 +1,6 @@
 import { z, ZodType, ZodObject } from 'zod';
-import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
-
-Alpine.plugin((Alpine) => {
+const zValidate = function (Alpine) {
 
     Alpine.magic('z', () => z);
 
@@ -112,6 +109,6 @@ Alpine.plugin((Alpine) => {
             cleanup(() => el.removeEventListener(expression, handler));
         }
     });
-});
+}
 
-Alpine.start();
+export {zValidate}
