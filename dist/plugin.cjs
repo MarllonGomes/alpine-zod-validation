@@ -1,2 +1,2 @@
-"use strict";const e=require("./zValidate-CGaplpm0.cjs");module.exports=e.zValidate;
+"use strict";const e=require("./zValidate-1XRwqFx5.cjs");module.exports=e.zValidate;
 //# sourceMappingURL=plugin.cjs.map

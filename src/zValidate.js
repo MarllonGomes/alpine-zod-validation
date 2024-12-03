@@ -1,8 +1,76 @@
-import { z, ZodType, ZodObject } from 'zod';
+import {z, ZodType, ZodObject} from 'zod';
+import {merge} from 'lodash';
 
 const zValidate = function (Alpine) {
 
     Alpine.magic('z', () => z);
+
+    Alpine.magic('zvalidation', (el) => {
+        const {zValidateSchema: zSchema} = Alpine.$data(el);
+        const formState = upsertFormState(el, {errors: {}, successes: []});
+
+        return {
+            isValid(field) {
+                return formState.successes.includes(field);
+            },
+            isInvalid(field) {
+                return Object.keys(formState.errors).includes(field);
+            },
+            getError(field) {
+                return formState.errors[field] ?? null;
+            },
+            reset() {
+                formState.errors = {};
+                formState.successes = [];
+            },
+            validate() {
+                const result = zSchema.safeParse(getData(el, true));
+                this.reset();
+
+                if (result.success) {
+                    formState.successes = Object.keys(getData(el, true));
+                    return true;
+                }
+
+                formState.errors = parseErrors(result.error);
+                return false;
+            },
+            validateOnly(field) {
+                if (!zSchema.shape || !(field in zSchema.shape)) {
+                    console.warn(`No validation schema defined for the field: ${field}`);
+                    return false;
+                }
+
+                const fieldData = {[field]: getData(el, true)[field]};
+                const fieldSchema = zSchema.shape[field];
+
+                const result = fieldSchema.safeParse(fieldData[field]);
+
+                if (result.success) {
+                    delete formState.errors[field];
+                    if (!formState.successes.includes(field)) {
+                        formState.successes.push(field);
+                    }
+                    return true;
+                }
+
+                formState.successes = formState.successes.filter(v => v !== field);
+                formState.errors[field] = result.error.format()._errors[0] ?? '';
+                return false;
+            }
+        };
+
+    })
+
+    const getElId = (el) => Alpine.$data(el).$id();
+
+    const getFormState = (el) => window.zValidate[getElId(el)] ?? Alpine.reactive({errors: {}, successes: []});
+
+    const upsertFormState = (el, value) => {
+        window.zValidate = window.zValidate ?? {};
+        window.zValidate[getElId(el)] = merge(getFormState(el), value);
+        return window.zValidate[getElId(el)];
+    }
 
     const getData = (el, parse = false) => {
         const data = Alpine.$data(el);
@@ -32,81 +100,22 @@ const zValidate = function (Alpine) {
         }, {});
     };
 
-    const getValidationMethods = (el) => {
-        const { zValidateSchema: zSchema } = Alpine.$data(el);
-
-        return {
-            errors: {},
-            successes: [],
-            isValid(field) {
-                return this.successes.includes(field);
-            },
-            isInvalid(field) {
-                return Object.keys(this.errors).includes(field);
-            },
-            getError(field) {
-                return this.errors[field] ?? null;
-            },
-            reset() {
-                this.errors = {};
-                this.successes = [];
-            },
-            validate() {
-                const result = zSchema.safeParse(getData(el, true));
-                this.reset();
-
-                if (result.success) {
-                    this.successes = Object.keys(getData(el, true));
-                    return true;
-                }
-
-                this.errors = parseErrors(result.error);
-                return false;
-            },
-            validateOnly(field) {
-                if (!zSchema.shape || !(field in zSchema.shape)) {
-                    console.warn(`No validation schema defined for the field: ${field}`);
-                    return false;
-                }
-
-                const fieldData = { [field]: getData(el, true)[field] };
-                const fieldSchema = zSchema.shape[field];
-
-                const result = fieldSchema.safeParse(fieldData[field]);
-
-                if (result.success) {
-                    delete this.errors[field];
-                    if (!this.successes.includes(field)) {
-                        this.successes.push(field);
-                    }
-                    return true;
-                }
-
-                this.successes = this.successes.filter(v => v !== field);
-                this.errors[field] = result.error.format()._errors[0] ?? '';
-                return false;
-            }
-        };
-    };
-
-    Alpine.directive('zvalidate', (el, { expression }, { cleanup }) => {
+    Alpine.directive('zvalidate', (el, {expression}, {cleanup}) => {
         const data = getData(el);
         checkCompatibility(data);
-
-        data.zvalidate = getValidationMethods(el)
 
         if (expression) {
             const handler = (event) => {
                 const model = event.target.getAttribute('x-model');
                 if (model) {
-                    data.zvalidate.validateOnly(model);
+                    Alpine.$data(el).$zvalidation.validateOnly(model);
                 }
             };
 
             el.addEventListener(expression, handler);
             cleanup(() => el.removeEventListener(expression, handler));
         }
-    });
+    })
 }
 
 export {zValidate}

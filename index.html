@@ -24,7 +24,7 @@
         name: '',
         email: '',
         save() {
-            this.zvalidate.validate();
+            $zvalidation.validate();
         }
     }"
     @submit.prevent="save"
@@ -33,19 +33,19 @@
         type="text"
         placeholder="nome"
         x-model="name"
-        :class="{ errored: zvalidate.isInvalid('name'), success: zvalidate.isValid('name') }"
+        :class="{ errored: $zvalidation.isInvalid('name'), success: $zvalidation.isValid('name') }"
     />
-    <span x-show="zvalidate.isInvalid('name')" x-text="zvalidate.getError('name')"></span>
-    <span x-show="zvalidate.isValid('name')" x-text="'successo'"></span>
+    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+    <span x-show="$zvalidation.isValid('name')" x-text="'successo'"></span>
 
     <input
         type="text"
         placeholder="email"
         x-model="email"
-        :class="{ errored: zvalidate.isInvalid('email'), success: zvalidate.isValid('email') }"
+        :class="{ errored: $zvalidation.isInvalid('email'), success: $zvalidation.isValid('email') }"
     />
-    <span x-show="zvalidate.isInvalid('email')" x-text="zvalidate.getError('email')"></span>
-    <span x-show="zvalidate.isValid('email')" x-text="'successo'"></span>
+    <span x-show="$zvalidation.isInvalid('email')" x-text="$zvalidation.getError('email')"></span>
+    <span x-show="$zvalidation.isValid('email')" x-text="'successo'"></span>
 
     <button type="submit">Submit</button>
 </form>

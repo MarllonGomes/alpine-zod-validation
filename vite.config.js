@@ -20,7 +20,7 @@ export default defineConfig({
             },
         },
         minify: true,
-        target: 'es6',
+        target: 'esnext',
         outDir: 'dist',
         emptyOutDir: true,
         sourcemap: true,
@@ -32,5 +32,7 @@ export default defineConfig({
     server: {
         open: true,
         port: 3000,
+        cors: true,
+        host: '0.0.0.0'
     },
 });
