@@ -100,21 +100,23 @@ const zValidate = function (Alpine) {
         }, {});
     };
 
-    Alpine.directive('zvalidate', (el, {expression}, {cleanup}) => {
-        const data = getData(el);
-        checkCompatibility(data);
+    Alpine.directive('zvalidate', (el, {expression}, {effect, cleanup}) => {
+        effect(() => {
+            const data = getData(el);
+            checkCompatibility(data);
 
-        if (expression) {
-            const handler = (event) => {
-                const model = event.target.getAttribute('x-model');
-                if (model) {
-                    Alpine.$data(el).$zvalidation.validateOnly(model);
-                }
-            };
+            if (expression) {
+                const handler = (event) => {
+                    const model = event.target.getAttribute('x-model');
+                    if (model) {
+                        Alpine.$data(el).$zvalidation.validateOnly(model);
+                    }
+                };
 
-            el.addEventListener(expression, handler);
-            cleanup(() => el.removeEventListener(expression, handler));
-        }
+                el.addEventListener(expression, handler);
+                cleanup(() => el.removeEventListener(expression, handler));
+            }
+        })
     })
 }
 
