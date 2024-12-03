@@ -93,9 +93,7 @@ const zValidate = function (Alpine) {
         const data = getData(el);
         checkCompatibility(data);
 
-        if (!data.zvalidate) {
-            data.zvalidate = getValidationMethods(el);
-        }
+        data.zvalidate = getValidationMethods(el)
 
         if (expression) {
             const handler = (event) => {
