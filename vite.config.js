@@ -12,10 +12,12 @@ export default defineConfig({
             name: 'zValidate',
         },
         rollupOptions: {
-            external: ['alpinejs'],
+            external: ['alpinejs', 'lodash', 'zod'],
             output: {
                 globals: {
-                    alpinejs: 'Alpine'
+                    alpinejs: 'Alpine',
+                    lodash: '_',
+                    zod: 'z',
                 },
             },
         },
@@ -24,7 +26,6 @@ export default defineConfig({
         outDir: 'dist',
         emptyOutDir: true,
         sourcemap: true,
-        brotliSize: false,
         chunkSizeWarningLimit: 2000,
         assetsInlineLimit: 4096,
         cssCodeSplit: false,

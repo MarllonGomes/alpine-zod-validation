@@ -19,6 +19,9 @@ const zValidate = function (Alpine) {
             getError(field) {
                 return formState.errors[field] ?? null;
             },
+            getErrors() {
+                return formState.errors;
+            },
             reset() {
                 formState.errors = {};
                 formState.successes = [];

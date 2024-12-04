@@ -1,7 +1,20 @@
 {
   "name": "@mfgomess/alpine-zod-validation",
-  "description": "A alpinejs plugin that integrates zod validation",
-  "version": "0.0.6",
+  "description": "A simple form validation plugin for Alpine.js using Zod",
+  "keywords": [
+    "alpine",
+    "livewire",
+    "alpinejs",
+    "zod",
+    "validation",
+    "validate",
+    "form",
+    "laravel",
+    "form validation",
+    "alpinejs validation",
+    "alpinejs zod validation"
+  ],
+  "version": "1.0.0",
   "main": "builds/plugin.js",
   "type": "module",
   "baseUrl": ".",
@@ -10,7 +23,6 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": [],
   "author": "MarllonGomes",
   "license": "MIT",
   "dependencies": {
@@ -19,14 +31,17 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "@types/lodash": "^4.17.13",
+    "@types/node": "^22.10.1",
     "vite": "^6.0.2"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/MarllonGomes/alpinejs-zod-validate.git"
+    "url": "git+ssh://git@github.com/MarllonGomes/alpine-zod-validate.git"
   },
   "bugs": {
-    "url": "https://github.com/MarllonGomes/alpinejs-zod-validate/issues"
+    "url": "https://github.com/MarllonGomes/alpine-zod-validate/issues"
   },
-  "homepage": "https://github.com/MarllonGomes/alpinejs-zod-validate#readme"
+  "homepage": "https://github.com/MarllonGomes/alpine-zod-validate#readme"
 }

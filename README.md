@@ -1,33 +1,43 @@
-# alpinejs-zod-validate
+# Alpine.js Zod Validation
 
-`alpinejs-zod-validate` is an integration between [Alpine.js](https://alpinejs.dev/) and [Zod](https://github.com/colinhacks/zod) for form validation. This library allows you to define validation schemas using Zod and apply them directly in your Alpine.js components with ease.
+Is an integration between [Alpine.js](https://www.npmjs.com/package/alpinejs) and [Zod](https://www.npmjs.com/package/zod) for form validation. 
+This library allows you to define validation schemas using Zod and apply them directly in your Alpine.js components with ease.
 
-## Features
+## Table of Contents
 
-- **Schema-based validation:** Utilize Zod schemas to define and validate your form data.
-- **Reactive feedback:** Provides real-time feedback to the user with error and success states.
-- **Easy integration:** Seamlessly integrates with Alpine.js, keeping your JavaScript code minimal and declarative.
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Why use alpinejs-zod-validate?
+
+As a Laravel developer, i've been using Laravel Livewire for a while, and i really like the way it handles form validation, but still wanted to perform a simple form validation in frontend,
+so i started to use Alpine.js, but i missed a robust way to validate forms with ease, that's when i decided to use Zod for schema-based validation, and it worked really well.
 
 ## Installation
 
-### You can install the package via npm:
 
+#### As a npm module + bundler
+
+Install the package via npm:
 ```bash
-npm install alpinejs-zod-validate
+$ npm install alpine-zod-validate
 ```
 
+Import the package in your project and start using it:
 ```javascript
-
 import Alpine from 'alpinejs';
-import zValidate from 'alpinejs-zod-validate';
+import {zValidate} from 'alpine-zod-validate';
 
 window.Alpine = Alpine;
 Alpine.plugin(zValidate);
 Alpine.start();
-
 ```
 
-### Use it from CDN
+#### Use it from CDN
+
 ```bash
 <script type="module" defer src="https://unpkg.com/@mfgomess/alpine-zod-validation/dist/cdn.js" />
 <script src="//unpkg.com/alpinejs" defer></script>
@@ -35,88 +45,126 @@ Alpine.start();
 
 ## Usage
 
-To use `alpinejs-zod-validate`, include it in your project and integrate it with your Alpine.js components. Below is an example of how to set up a simple form validation scenario:
-
-### Example
+To use validation you should apply the 'x-zvalidate' directive to your alpinejs component, and define a 'zValidateSchema' property with your Zod schema, then you can use the $zvalidation magic method to check if the form is valid or not.
 
 ```html
-<!doctype html>
-<html lang="pt_BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AlpineJS Validation</title>
-    <style>
-        .errored {
-            border: 1px solid red;
-        }
-
-        .success {
-            border: 1px solid green;
-        }
-    </style>
-</head>
-<body>
-
-<form
-    style="display: flex; flex-direction: column; gap: 10px; width: 300px;"
-    x-zvalidate="input"
-    x-data="{
-        zValidateSchema: $z.object({ name: $z.string().min(3), email: $z.string().email('Digite um e-mail válido') }),
-        name: '',
-        email: '',
-        save() {
-            $zvalidation.validate();
-        }
-    }"
-    @submit.prevent="save"
->
-    <input
-        type="text"
-        placeholder="nome"
-        x-model="name"
-        :class="{ errored: $zvalidation.isInvalid('name'), success: $zvalidation.isValid('name') }"
-    />
-    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
-    <span x-show="$zvalidation.isValid('name')" x-text="'successo'"></span>
-
-    <input
-        type="text"
-        placeholder="email"
-        x-model="email"
-        :class="{ errored: $zvalidation.isInvalid('email'), success: $zvalidation.isValid('email') }"
-    />
-    <span x-show="$zvalidation.isInvalid('email')" x-text="$zvalidation.getError('email')"></span>
-    <span x-show="$zvalidation.isValid('email')" x-text="'successo'"></span>
-
-    <button type="submit">Submit</button>
-</form>
-
-<script type="module" src="/builds/cdn.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.6/dist/cdn.min.js"></script>
-</body>
-</html>
+    <form
+        @submit.prevent="save"
+        x-zvalidate
+        x-data="{
+            name: '',
+            zValidateSchema: $z.object({ 
+                name: $z.string().min(3), 
+                email: $z.string().email() 
+            }),
+            save() {
+                if($zvalidation.validate()) {
+                    console.log('Form is valid');
+                }
+            }
+        }"        
+    >
+        <input 
+            type="text" 
+            x-model="name"
+            x-bind:class="{ 
+                'errored': $zvalidation.isInvalid('name'), 
+                'success': $zvalidation.isValid('name') 
+            }"
+        />
+        <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+        <button type="submit">Submit</button>
+    </form>
 ```
 
-### How to Use
+## Features
 
-1. Define a zod object schema into your x-data using the magic method $z
-2. Append z-validate directive to your component
-2.2 The z-validate accepts a param that will be used to validate inputs on demand, can be: input, change, blur, keyup, keydown, etc
-3. Use the $zvalidation magic method to display the validation feedback, it exposes the following methods:
-3.1. $zvalidation.isValid(fieldName)
-3.2. $zvalidation.isInvalid(fieldName) 
-3.3. $zvalidation.getError(fieldName)
+### On-event validation
+You can pass any input event to the x-validate directive, it will react to the x-model that dispatched that event and validate the input right after
+```html
+<form 
+    x-zvalidate="input" 
+    x-data="{ name: '', zValidateSchema: $z.string().min(3) }"
+>
+    <input type="text" x-model="name" />
+    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+</form>
+```
+
+### $z magic method
+
+The $z magic method is just a shortcut to the Zod object, you can use it to define your validation schema in a more readable way.
+
+[Check Zod documentation](https://www.npmjs.com/package/zod) for more information about Zod.
+
+```html
+<form 
+    x-zvalidate 
+    x-data="{  
+        zValidateSchema: $z.object({ 
+            name: $z.string().min(3), 
+            email: $z.string().email() 
+        }) 
+    }"
+>
+```
+
+
+### $zvalidation magic method
+
+The $zvalidation magic method provides some useful methods to check the form validation status, like:
+
+| Method                        | Return Type      | Description                                                                                       |
+|-------------------------------|------------------|---------------------------------------------------------------------------------------------------|
+| $zvalidation.validate()       | bool             | Checks if the form is valid or not, returns a boolean.                                            |
+| $zvalidation.isInvalid(field) | boolean          | Checks if a specific field is invalid, returns a boolean.                                         |
+| $zvalidation.isValid(field)   | boolean          | Checks if a specific field is valid, returns a boolean. (Triggered only after the field is dirty) |
+| $zvalidation.getError(field)  | ?string          | Gets the error message of a specific field, returns a string.                                     |
+| $zvalidation.getErrors()      | {field: 'error'} | Gets all error messages, returns an object.                                                       |
+| $zvalidation.reset()          | void             | Resets the form validation state.                                                                 |
+
+```html
+<form 
+    x-zvalidate 
+    x-data="{ 
+        name: '', 
+        zValidateSchema: $z.string().min(3),
+        onSave() {
+            if($zvalidation.validate()) {
+                console.log('Form is valid');
+                return;
+            }
+            
+            console.log('Form is invalid');
+            console.log($zvalidation.getErrors());
+        } 
+    }"
+>
+    <input 
+        type="text" 
+        x-model="name"
+        x-bind:class="{ 
+            'errored': $zvalidation.isInvalid('name'), 
+            'success': $zvalidation.isValid('name') 
+        }"
+    />
+    <span 
+        x-show="$zvalidation.isInvalid('name')" 
+        x-text="$zvalidation.getError('name')"
+    ></span>
+    
+    <button @click="onSave">Validate</button>    
+    <button @click="$zvalidation.reset()">Reset</button>
+</form>
+```
+
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Contributions, issues, and feature requests are welcome.
 
 ## License
 
 MIT
 
----
-
-This README provides an overview of the functionality, installation, and usage examples to help users get started with your package.
 
