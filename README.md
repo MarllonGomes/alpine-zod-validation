@@ -124,7 +124,7 @@ The $zValidation magic method provides some useful methods to check the form val
     x-zvalidate 
     x-data="{ 
         name: '', 
-        zValidateSchema: $z.string().min(3),
+        zValidateSchema: $z.object({ name: $z.string().min(3) }),
         onSave() {
             if($zValidation.validate()) {
                 console.log('Form is valid');
