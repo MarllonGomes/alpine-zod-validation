@@ -11,18 +11,8 @@ export default defineConfig({
             },
             name: 'zValidate',
         },
-        rollupOptions: {
-            external: ['alpinejs', 'lodash', 'zod'],
-            output: {
-                globals: {
-                    alpinejs: 'Alpine',
-                    lodash: '_',
-                    zod: 'z',
-                },
-            },
-        },
         minify: true,
-        target: 'esnext',
+        target: 'es6',
         outDir: 'dist',
         emptyOutDir: true,
         sourcemap: true,

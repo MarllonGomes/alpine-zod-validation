@@ -1,4 +1,4 @@
-import { z as i } from "./zValidation-BwfXwmQ7.js";
+import { zValidation as i } from "./plugin.js";
 document.addEventListener("alpine:init", () => {
   window.Alpine.plugin(i);
 });
