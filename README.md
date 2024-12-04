@@ -19,7 +19,7 @@ This library allows you to define validation schemas using Zod and apply them di
 
 Install the package via npm:
 ```bash
-$ npm install alpine-zod-validate
+$ npm i @mfgomess/alpine-zod-validation
 ```
 
 Import the package in your project and start using it:
