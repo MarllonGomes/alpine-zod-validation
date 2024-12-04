@@ -7,10 +7,12 @@
     <style>
         .errored {
             border: 1px solid red;
+            background-color: lightcoral;
         }
 
         .success {
             border: 1px solid green;
+            background-color: lightgreen;
         }
     </style>
 </head>
@@ -24,7 +26,7 @@
         name: '',
         email: '',
         save() {
-            $zvalidation.validate();
+            $zValidation.validate();
         }
     }"
     @submit.prevent="save"
@@ -33,19 +35,19 @@
         type="text"
         placeholder="nome"
         x-model="name"
-        :class="{ errored: $zvalidation.isInvalid('name'), success: $zvalidation.isValid('name') }"
+        :class="{ errored: $zValidation.isInvalid('name'), success: $zValidation.isValid('name') }"
     />
-    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
-    <span x-show="$zvalidation.isValid('name')" x-text="'successo'"></span>
+    <span x-show="$zValidation.isInvalid('name')" x-text="$zValidation.getError('name')"></span>
+    <span x-show="$zValidation.isValid('name')" x-text="'successo'"></span>
 
     <input
         type="text"
         placeholder="email"
         x-model="email"
-        :class="{ errored: $zvalidation.isInvalid('email'), success: $zvalidation.isValid('email') }"
+        :class="{ errored: $zValidation.isInvalid('email'), success: $zValidation.isValid('email') }"
     />
-    <span x-show="$zvalidation.isInvalid('email')" x-text="$zvalidation.getError('email')"></span>
-    <span x-show="$zvalidation.isValid('email')" x-text="'successo'"></span>
+    <span x-show="$zValidation.isInvalid('email')" x-text="$zValidation.getError('email')"></span>
+    <span x-show="$zValidation.isValid('email')" x-text="'successo'"></span>
 
     <button type="submit">Submit</button>
 </form>

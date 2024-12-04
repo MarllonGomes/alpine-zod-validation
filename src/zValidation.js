@@ -1,11 +1,11 @@
 import {z, ZodType, ZodObject} from 'zod';
 import {merge} from 'lodash';
 
-const zValidate = function (Alpine) {
+const zValidation = function (Alpine) {
 
     Alpine.magic('z', () => z);
 
-    Alpine.magic('zvalidation', (el) => {
+    Alpine.magic('zValidation', (el) => {
         const {zValidateSchema: zSchema} = Alpine.$data(el);
         const formState = upsertFormState(el, {errors: {}, successes: []});
 
@@ -27,16 +27,17 @@ const zValidate = function (Alpine) {
                 formState.successes = [];
             },
             validate() {
-                const result = zSchema.safeParse(getData(el, true));
                 this.reset();
 
-                if (result.success) {
-                    formState.successes = Object.keys(getData(el, true));
-                    return true;
-                }
+                const result = zSchema.safeParse(getData(el, true));
 
-                formState.errors = parseErrors(result.error);
-                return false;
+                const errors = parseErrors(result.error);
+                const successes = Object.keys(zSchema.shape).filter(field => !Object.keys(errors).includes(field));
+
+                formState.errors = errors;
+                formState.successes = successes;
+
+                return result.success;
             },
             validateOnly(field) {
                 if (!zSchema.shape || !(field in zSchema.shape)) {
@@ -67,12 +68,12 @@ const zValidate = function (Alpine) {
 
     const getElId = (el) => Alpine.$data(el).$id();
 
-    const getFormState = (el) => window.zValidate[getElId(el)] ?? Alpine.reactive({errors: {}, successes: []});
+    const getFormState = (el) => window.zValidation[getElId(el)] ?? Alpine.reactive({errors: {}, successes: []});
 
     const upsertFormState = (el, value) => {
-        window.zValidate = window.zValidate ?? {};
-        window.zValidate[getElId(el)] = merge(getFormState(el), value);
-        return window.zValidate[getElId(el)];
+        window.zValidation = window.zValidation ?? {};
+        window.zValidation[getElId(el)] = merge(getFormState(el), value);
+        return window.zValidation[getElId(el)];
     }
 
     const getData = (el, parse = false) => {
@@ -95,7 +96,7 @@ const zValidate = function (Alpine) {
     };
 
     const parseErrors = (zodError) => {
-        return Object.entries(zodError.format()).reduce((errors, [field, value]) => {
+        return Object.entries(zodError?.format() ?? {}).reduce((errors, [field, value]) => {
             if (field !== '_errors' && Array.isArray(value['_errors'])) {
                 errors[field] = value['_errors'][0];
             }
@@ -112,7 +113,7 @@ const zValidate = function (Alpine) {
                 const handler = (event) => {
                     const model = event.target.getAttribute('x-model');
                     if (model) {
-                        Alpine.$data(el).$zvalidation.validateOnly(model);
+                        Alpine.$data(el).$zValidation.validateOnly(model);
                     }
                 };
 
@@ -123,4 +124,4 @@ const zValidate = function (Alpine) {
     })
 }
 
-export {zValidate}
+export {zValidation}

@@ -1,8 +1,8 @@
-import { z, ZodType as w, ZodObject as V } from "zod";
-import { merge as v } from "lodash";
-const g = function(a) {
-  a.magic("z", () => z), a.magic("zvalidation", (e) => {
-    const { zValidateSchema: s } = a.$data(e), t = f(e, { errors: {}, successes: [] });
+import { z, ZodType as V, ZodObject as w } from "zod";
+import { merge as S } from "lodash";
+const y = function(a) {
+  a.magic("z", () => z), a.magic("zValidation", (e) => {
+    const { zValidateSchema: s } = a.$data(e), t = l(e, { errors: {}, successes: [] });
     return {
       isValid(r) {
         return t.successes.includes(r);
@@ -20,42 +20,43 @@ const g = function(a) {
         t.errors = {}, t.successes = [];
       },
       validate() {
-        const r = s.safeParse(o(e, !0));
-        return this.reset(), r.success ? (t.successes = Object.keys(o(e, !0)), !0) : (t.errors = h(r.error), !1);
+        this.reset();
+        const r = s.safeParse(u(e, !0)), o = f(r.error), n = Object.keys(s.shape).filter((c) => !Object.keys(o).includes(c));
+        return t.errors = o, t.successes = n, r.success;
       },
       validateOnly(r) {
         if (!s.shape || !(r in s.shape))
           return console.warn(`No validation schema defined for the field: ${r}`), !1;
-        const d = { [r]: o(e, !0)[r] }, c = s.shape[r].safeParse(d[r]);
+        const o = { [r]: u(e, !0)[r] }, c = s.shape[r].safeParse(o[r]);
         return c.success ? (delete t.errors[r], t.successes.includes(r) || t.successes.push(r), !0) : (t.successes = t.successes.filter((i) => i !== r), t.errors[r] = c.error.format()._errors[0] ?? "", !1);
       }
     };
   });
-  const n = (e) => a.$data(e).$id(), m = (e) => window.zValidate[n(e)] ?? a.reactive({ errors: {}, successes: [] }), f = (e, s) => (window.zValidate = window.zValidate ?? {}, window.zValidate[n(e)] = v(m(e), s), window.zValidate[n(e)]), o = (e, s = !1) => {
+  const d = (e) => a.$data(e).$id(), m = (e) => window.zValidation[d(e)] ?? a.reactive({ errors: {}, successes: [] }), l = (e, s) => (window.zValidation = window.zValidation ?? {}, window.zValidation[d(e)] = S(m(e), s), window.zValidation[d(e)]), u = (e, s = !1) => {
     const t = a.$data(e);
     return s ? JSON.parse(JSON.stringify(t)) : t;
-  }, l = (e) => {
+  }, h = (e) => {
     if (typeof e != "object")
       throw new Error("ZValidate: x-data must be an object to use the zvalidate directive.");
     if (!e.zValidateSchema)
       throw new Error("ZValidate: zValidateSchema property is required on x-data model.");
-    if (!(e.zValidateSchema instanceof w) || !(e.zValidateSchema instanceof V))
+    if (!(e.zValidateSchema instanceof V) || !(e.zValidateSchema instanceof w))
       throw new Error("ZValidate: zValidateSchema must be an instance of a Zod object.");
-  }, h = (e) => Object.entries(e.format()).reduce((s, [t, r]) => (t !== "_errors" && Array.isArray(r._errors) && (s[t] = r._errors[0]), s), {});
+  }, f = (e) => Object.entries(e?.format() ?? {}).reduce((s, [t, r]) => (t !== "_errors" && Array.isArray(r._errors) && (s[t] = r._errors[0]), s), {});
   a.directive("zvalidate", (e, { expression: s }, { effect: t, cleanup: r }) => {
     t(() => {
-      const d = o(e);
-      if (l(d), s) {
-        const u = (c) => {
+      const o = u(e);
+      if (h(o), s) {
+        const n = (c) => {
           const i = c.target.getAttribute("x-model");
-          i && a.$data(e).$zvalidation.validateOnly(i);
+          i && a.$data(e).$zValidation.validateOnly(i);
         };
-        e.addEventListener(s, u), r(() => e.removeEventListener(s, u));
+        e.addEventListener(s, n), r(() => e.removeEventListener(s, n));
       }
     });
   });
 };
 export {
-  g as z
+  y as z
 };
-//# sourceMappingURL=zValidate-B6k4MB58.js.map
+//# sourceMappingURL=zValidation-BwfXwmQ7.js.map

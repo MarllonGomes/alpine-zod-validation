@@ -38,10 +38,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/MarllonGomes/alpine-zod-validate.git"
+    "url": "git+ssh://git@github.com/MarllonGomes/alpine-zod-validation.git"
   },
   "bugs": {
-    "url": "https://github.com/MarllonGomes/alpine-zod-validate/issues"
+    "url": "https://github.com/MarllonGomes/alpine-zod-validation/issues"
   },
-  "homepage": "https://github.com/MarllonGomes/alpine-zod-validate#readme"
+  "homepage": "https://github.com/MarllonGomes/alpine-zod-validation#readme"
 }

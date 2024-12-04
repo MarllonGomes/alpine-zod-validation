@@ -1,5 +1,5 @@
-import { z as o } from "./zValidate-B6k4MB58.js";
+import { z as i } from "./zValidation-BwfXwmQ7.js";
 export {
-  o as zValidate
+  i as zValidation
 };
 //# sourceMappingURL=plugin.js.map

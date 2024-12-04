@@ -1,3 +1,3 @@
-import {zValidate} from '../src/zValidate.js'
+import {zValidation} from '../src/zValidation.js'
 
-export {zValidate}
+export {zValidation}

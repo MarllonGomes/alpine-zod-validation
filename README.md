@@ -25,10 +25,10 @@ $ npm install alpine-zod-validate
 Import the package in your project and start using it:
 ```javascript
 import Alpine from 'alpinejs';
-import {zValidate} from 'alpine-zod-validate';
+import {zValidation} from 'alpine-zod-validation';
 
 window.Alpine = Alpine;
-Alpine.plugin(zValidate);
+Alpine.plugin(zValidation);
 Alpine.start();
 ```
 
@@ -41,7 +41,7 @@ Alpine.start();
 
 ## Usage
 
-To use validation you should apply the 'x-zvalidate' directive to your alpinejs component, and define a 'zValidateSchema' property with your Zod schema, then you can use the $zvalidation magic method to check if the form is valid or not.
+To use validation you should apply the 'x-zvalidate' directive to your alpinejs component, and define a 'zValidateSchema' property with your Zod schema, then you can use the $zValidation magic method to check if the form is valid or not.
 
 ```html
 <form
@@ -54,7 +54,7 @@ To use validation you should apply the 'x-zvalidate' directive to your alpinejs 
             email: $z.string().email() 
         }),
         save() {
-            if($zvalidation.validate()) {
+            if($zValidation.validate()) {
                 console.log('Form is valid');
             }
         }
@@ -64,11 +64,11 @@ To use validation you should apply the 'x-zvalidate' directive to your alpinejs 
         type="text" 
         x-model="name"
         x-bind:class="{ 
-            'errored': $zvalidation.isInvalid('name'), 
-            'success': $zvalidation.isValid('name') 
+            'errored': $zValidation.isInvalid('name'), 
+            'success': $zValidation.isValid('name') 
         }"
     />
-    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+    <span x-show="$zValidation.isInvalid('name')" x-text="$zValidation.getError('name')"></span>
     <button type="submit">Submit</button>
 </form>
 ```
@@ -83,7 +83,7 @@ You can pass any input event to the x-validate directive, it will react to the x
     x-data="{ name: '', zValidateSchema: $z.string().min(3) }"
 >
     <input type="text" x-model="name" />
-    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+    <span x-show="$zValidation.isInvalid('name')" x-text="$zValidation.getError('name')"></span>
 </form>
 ```
 
@@ -106,18 +106,18 @@ The $z magic method is just a shortcut to the Zod object, you can use it to defi
 ```
 
 
-### $zvalidation magic method
+### $zValidation magic method
 
-The $zvalidation magic method provides some useful methods to check the form validation status, like:
+The $zValidation magic method provides some useful methods to check the form validation status, like:
 
 | Method                        | Return Type      | Description                                                                                       |
 |-------------------------------|------------------|---------------------------------------------------------------------------------------------------|
-| $zvalidation.validate()       | bool             | Checks if the form is valid or not, returns a boolean.                                            |
-| $zvalidation.isInvalid(field) | boolean          | Checks if a specific field is invalid, returns a boolean.                                         |
-| $zvalidation.isValid(field)   | boolean          | Checks if a specific field is valid, returns a boolean. (Triggered only after the field is dirty) |
-| $zvalidation.getError(field)  | ?string          | Gets the error message of a specific field, returns a string.                                     |
-| $zvalidation.getErrors()      | {field: 'error'} | Gets all error messages, returns an object.                                                       |
-| $zvalidation.reset()          | void             | Resets the form validation state.                                                                 |
+| $zValidation.validate()       | bool             | Checks if the form is valid or not, returns a boolean.                                            |
+| $zValidation.isInvalid(field) | boolean          | Checks if a specific field is invalid, returns a boolean.                                         |
+| $zValidation.isValid(field)   | boolean          | Checks if a specific field is valid, returns a boolean. (Triggered only after the field is dirty) |
+| $zValidation.getError(field)  | ?string          | Gets the error message of a specific field, returns a string.                                     |
+| $zValidation.getErrors()      | {field: 'error'} | Gets all error messages, returns an object.                                                       |
+| $zValidation.reset()          | void             | Resets the form validation state.                                                                 |
 
 ```html
 <form 
@@ -126,13 +126,13 @@ The $zvalidation magic method provides some useful methods to check the form val
         name: '', 
         zValidateSchema: $z.string().min(3),
         onSave() {
-            if($zvalidation.validate()) {
+            if($zValidation.validate()) {
                 console.log('Form is valid');
                 return;
             }
             
             console.log('Form is invalid');
-            console.log($zvalidation.getErrors());
+            console.log($zValidation.getErrors());
         } 
     }"
 >
@@ -140,17 +140,17 @@ The $zvalidation magic method provides some useful methods to check the form val
         type="text" 
         x-model="name"
         x-bind:class="{ 
-            'errored': $zvalidation.isInvalid('name'), 
-            'success': $zvalidation.isValid('name') 
+            'errored': $zValidation.isInvalid('name'), 
+            'success': $zValidation.isValid('name') 
         }"
     />
     <span 
-        x-show="$zvalidation.isInvalid('name')" 
-        x-text="$zvalidation.getError('name')"
+        x-show="$zValidation.isInvalid('name')" 
+        x-text="$zValidation.getError('name')"
     ></span>
     
     <button @click="onSave">Validate</button>    
-    <button @click="$zvalidation.reset()">Reset</button>
+    <button @click="$zValidation.reset()">Reset</button>
 </form>
 ```
 
