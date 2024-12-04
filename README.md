@@ -11,10 +11,6 @@ This library allows you to define validation schemas using Zod and apply them di
 - [Contributing](#contributing)
 - [License](#license)
 
-## Why use alpinejs-zod-validate?
-
-As a Laravel developer, i've been using Laravel Livewire for a while, and i really like the way it handles form validation, but still wanted to perform a simple form validation in frontend,
-so i started to use Alpine.js, but i missed a robust way to validate forms with ease, that's when i decided to use Zod for schema-based validation, and it worked really well.
 
 ## Installation
 
@@ -48,33 +44,33 @@ Alpine.start();
 To use validation you should apply the 'x-zvalidate' directive to your alpinejs component, and define a 'zValidateSchema' property with your Zod schema, then you can use the $zvalidation magic method to check if the form is valid or not.
 
 ```html
-    <form
-        @submit.prevent="save"
-        x-zvalidate
-        x-data="{
-            name: '',
-            zValidateSchema: $z.object({ 
-                name: $z.string().min(3), 
-                email: $z.string().email() 
-            }),
-            save() {
-                if($zvalidation.validate()) {
-                    console.log('Form is valid');
-                }
+<form
+    @submit.prevent="save"
+    x-zvalidate
+    x-data="{
+        name: '',
+        zValidateSchema: $z.object({ 
+            name: $z.string().min(3), 
+            email: $z.string().email() 
+        }),
+        save() {
+            if($zvalidation.validate()) {
+                console.log('Form is valid');
             }
-        }"        
-    >
-        <input 
-            type="text" 
-            x-model="name"
-            x-bind:class="{ 
-                'errored': $zvalidation.isInvalid('name'), 
-                'success': $zvalidation.isValid('name') 
-            }"
-        />
-        <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
-        <button type="submit">Submit</button>
-    </form>
+        }
+    }"        
+>
+    <input 
+        type="text" 
+        x-model="name"
+        x-bind:class="{ 
+            'errored': $zvalidation.isInvalid('name'), 
+            'success': $zvalidation.isValid('name') 
+        }"
+    />
+    <span x-show="$zvalidation.isInvalid('name')" x-text="$zvalidation.getError('name')"></span>
+    <button type="submit">Submit</button>
+</form>
 ```
 
 ## Features
