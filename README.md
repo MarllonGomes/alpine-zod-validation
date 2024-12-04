@@ -80,7 +80,7 @@ You can pass any input event to the x-validate directive, it will react to the x
 ```html
 <form 
     x-zvalidate="input" 
-    x-data="{ name: '', zValidateSchema: $z.string().min(3) }"
+    x-data="{ name: '', zValidateSchema: $z.object({ name: $z.string().min(3) }) }"
 >
     <input type="text" x-model="name" />
     <span x-show="$zValidation.isInvalid('name')" x-text="$zValidation.getError('name')"></span>
