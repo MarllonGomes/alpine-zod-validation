@@ -34,7 +34,7 @@ Alpine.start();
 
 #### Use it from CDN
 
-```bash
+```html
 <script type="module" defer src="https://unpkg.com/@mfgomess/alpine-zod-validation/dist/cdn.js" />
 <script src="//unpkg.com/alpinejs" defer></script>
 ```
