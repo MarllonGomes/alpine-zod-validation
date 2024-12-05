@@ -49,6 +49,20 @@
     <span x-show="$zValidation.isInvalid('email')" x-text="$zValidation.getError('email')"></span>
     <span x-show="$zValidation.isValid('email')" x-text="'successo'"></span>
 
+
+    <h3>Nested example</h3>
+    <div x-zvalidate="input" x-data="{ nestedName: '', zValidateSchema: $z.object({ nestedName: $z.string().min(3) }) }">
+        <input
+            type="text"
+            placeholder="nested name"
+            x-model="nestedName"
+            :class="{ errored: $zValidation.isInvalid('nestedName'), success: $zValidation.isValid('nestedName') }"
+        />
+        <span x-show="$zValidation.isInvalid('nestedName')" x-text="$zValidation.getError('nestedName')"></span>
+        <span x-show="$zValidation.isValid('nestedName')" x-text="'successo'"></span>
+    </div>
+
+
     <button type="submit">Submit</button>
 </form>
 

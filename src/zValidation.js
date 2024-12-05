@@ -110,15 +110,34 @@ const zValidation = function (Alpine) {
             checkCompatibility(data);
 
             if (expression) {
+
                 const handler = (event) => {
                     const model = event.target.getAttribute('x-model');
                     if (model) {
-                        Alpine.$data(el).$zValidation.validateOnly(model);
+                        const alpineData = Alpine.$data(el);
+                        if(alpineData?.$zValidation?.validateOnly && alpineData[model] !== undefined) {
+                            alpineData.$zValidation.validateOnly(model);
+                        }
                     }
                 };
 
-                el.addEventListener(expression, handler);
-                cleanup(() => el.removeEventListener(expression, handler));
+                const listeners = [];
+                const dataKeys = Object.keys(getData(el, true));
+
+                dataKeys.forEach(field => {
+                    if(field === 'zValidateSchema') return;
+                    const modelledEl = el.querySelector(`[x-model="${field}"]`);
+                    if(!modelledEl) return;
+
+                    listeners.push({
+                        field,
+                        listener: modelledEl.addEventListener(expression, handler)
+                    });
+                });
+
+                cleanup(() => {
+                    listeners.forEach(({field, listener}) => field.removeEventListener(expression, listener));
+                });
             }
         })
     })
