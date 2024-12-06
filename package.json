@@ -14,7 +14,7 @@
     "alpinejs validation",
     "alpinejs zod validation"
   ],
-  "version": "1.0.7",
+  "version": "1.1.0",
   "main": "builds/plugin.js",
   "type": "module",
   "baseUrl": ".",
