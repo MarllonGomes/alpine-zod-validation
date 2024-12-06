@@ -20,13 +20,13 @@
 
 <form
     style="display: flex; flex-direction: column; gap: 10px; width: 300px;"
-    x-zvalidate="input"
+    x-zvalidation.listen="input"
     x-data="{
-        zValidateSchema: $z.object({ name: $z.string().min(3), email: $z.string().email('Digite um e-mail válido') }),
+        zSchema: $z.object({ name: $z.string().min(3), email: $z.string().email('Digite um e-mail válido') }),
         name: '',
         email: '',
         save() {
-            $zValidation.validate();
+            this.zValidate();
         }
     }"
     @submit.prevent="save"
@@ -35,31 +35,39 @@
         type="text"
         placeholder="nome"
         x-model="name"
-        :class="{ errored: $zValidation.isInvalid('name'), success: $zValidation.isValid('name') }"
+        :class="{ errored: zIsInvalid('name'), success: zIsValid('name') }"
     />
-    <span x-show="$zValidation.isInvalid('name')" x-text="$zValidation.getError('name')"></span>
-    <span x-show="$zValidation.isValid('name')" x-text="'successo'"></span>
+    <span x-show="zIsInvalid('name')" x-text="zFirstErrorFor('name')"></span>
+    <span x-show="zIsValid('name')" x-text="'successo'"></span>
 
     <input
         type="text"
         placeholder="email"
         x-model="email"
-        :class="{ errored: $zValidation.isInvalid('email'), success: $zValidation.isValid('email') }"
+        :class="{ errored: zIsInvalid('email'), success: zIsValid('email') }"
     />
-    <span x-show="$zValidation.isInvalid('email')" x-text="$zValidation.getError('email')"></span>
-    <span x-show="$zValidation.isValid('email')" x-text="'successo'"></span>
+    <span x-show="zIsInvalid('email')" x-text="zFirstErrorFor('email')"></span>
+    <span x-show="zIsValid('email')" x-text="'successo'"></span>
 
 
     <h3>Nested example</h3>
-    <div x-zvalidate="input" x-data="{ nestedName: '', zValidateSchema: $z.object({ nestedName: $z.string().min(3) }) }">
+    <div
+        x-zvalidation.listen="input"
+        x-data="{
+            zSchema: $z.object({ nestedName: $z.string().min(3) }),
+            nestedName: ''
+        }">
         <input
             type="text"
             placeholder="nested name"
             x-model="nestedName"
-            :class="{ errored: $zValidation.isInvalid('nestedName'), success: $zValidation.isValid('nestedName') }"
+            :class="{
+                'errored': zIsInvalid('nestedName'),
+                'success': zIsValid('nestedName')
+            }"
         />
-        <span x-show="$zValidation.isInvalid('nestedName')" x-text="$zValidation.getError('nestedName')"></span>
-        <span x-show="$zValidation.isValid('nestedName')" x-text="'successo'"></span>
+        <span x-show="zIsInvalid('nestedName')" x-text="zFirstErrorFor('nestedName')"></span>
+        <span x-show="zIsValid('nestedName')" x-text="'successo'"></span>
     </div>
 
 

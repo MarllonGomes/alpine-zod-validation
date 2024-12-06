@@ -73,24 +73,6 @@ const zValidation = (Alpine) => {
         return true;
     }
 
-    const setupListeners = (event, el, Alpine) => {
-        return Array.from(el.querySelectorAll('[x-model]'))
-            .map(input => {
-                const field = input.getAttribute('x-model');
-                const listener = input.addEventListener(event, () => {
-                    Alpine.$data(el).zValidateOnly(field);
-                });
-
-                return { field, listener, event: event }
-            })
-    }
-
-    const cleanListeners = (listeners) => {
-        listeners.forEach(({ field, listener, event }) => {
-            field.removeEventListener(event, listener);
-        });
-    }
-
     const bindComponentHelpers = (el, Alpine) => {
         Alpine.bind(el, {
             'x-init'() {
@@ -133,10 +115,9 @@ const zValidation = (Alpine) => {
                         }, {});
                     },
                     _zParseZodSuccesses(zodError, schema) {
+                        const errors = zodError.format();
                         return Object.keys(schema).reduce((successes, field) => {
-                            if (field !== '_errors' && !Array.isArray(zodError[field]?._errors)) {
-                                successes[field] = true;
-                            }
+                            successes[field] = !Object.keys(errors).includes(field);
                             return successes;
                         }, {});
                     },
@@ -145,8 +126,10 @@ const zValidation = (Alpine) => {
                         const result = this.zSchema.safeParse(this);
                         if (result.success) {
                             this.zFormState.errors = {};
-                            this.zFormState.successes = Object.keys(this.zSchema.shape);
-
+                            this.zFormState.successes = Object.keys(this.zSchema.shape).reduce((successes, field) => {
+                                successes[field] = true;
+                                return successes;
+                            }, {});
                             return true;
                         }
 
@@ -181,7 +164,7 @@ const zValidation = (Alpine) => {
                         return Object.keys(this.zFormState.errors).includes(field);
                     },
                     zFirstErrorFor(field) {
-                        if(this.zFormState.errors[field]) {
+                        if (this.zFormState.errors[field]) {
                             return this.zFormState.errors[field][0] ?? null;
                         }
                         return null;
@@ -211,10 +194,43 @@ const zValidation = (Alpine) => {
         })
     }
 
+    const bindEventListeners = (event, el, Alpine, cleanup) => {
+        Alpine.bind(el, {
+            'x-init'() {
+                this._zSetupListeners(event)
+                cleanup(() => this._zCleanListeners());
+            },
+            'x-data'() {
+                return {
+                    _zEventListeners: [],
+                    _zSetupListeners(event) {
+                        Array.from(this.$root.querySelectorAll('[x-model]'))
+                            .forEach((input) => {
+                                const field = input.getAttribute('x-model');
+
+                                if (!Object.keys(this.zSchema.shape).includes(field)) return;
+
+                                const listener = input.addEventListener(event, () => {
+                                    this.$nextTick(() => this.zValidateOnly(field));
+                                });
+
+                                this._zEventListeners.push({field, listener, event: event});
+                            });
+                    },
+                    _zCleanupListeners() {
+                        this._zEventListeners.forEach(({field, listener, event}) => {
+                            field.removeEventListener(event, listener);
+                        });
+                    }
+                }
+            }
+        });
+    }
+
 
     Alpine.magic('z', () => z);
 
-    Alpine.directive('zvalidate', (el, {modifiers, expression}, {cleanup}) => {
+    Alpine.directive('zvalidation', (el, {modifiers, expression}, {cleanup}) => {
 
 
         bindComponentHelpers(el, Alpine);
@@ -227,8 +243,7 @@ const zValidation = (Alpine) => {
         }
 
         if (modifiers.includes('listen') && expression) {
-            const listeners = setupListeners(expression, el, Alpine);
-            cleanup(() => cleanListeners(listeners));
+            bindEventListeners(expression, el, Alpine, cleanup);
         }
 
     }).before('bind');
