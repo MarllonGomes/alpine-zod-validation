@@ -147,12 +147,12 @@ const zValidation = (Alpine) => {
 
                         const result = fieldSchema.safeParse(this[field]);
                         if (result.success) {
-                            this.zFormState.errors[field] = null;
+                            delete this.zFormState.errors[field];
                             this.zFormState.successes[field] = true;
                             return true;
                         }
 
-                        this.zFormState.errors[field] = [result.error.format()._errors[0] ?? null];
+                        this.zFormState.errors[field] = [result.error.format()._errors[0]];
                         this.zFormState.successes[field] = false;
                         return false;
                     },
@@ -188,22 +188,22 @@ const zValidation = (Alpine) => {
                     },
                     zValidateOnly(field) {
                         this._zProcessZodFieldValidation(field);
-                    },
+                    }
                 };
             }
         })
     }
 
-    const bindEventListeners = (event, el, Alpine, cleanup) => {
+    const bindEventListeners = (event, reactiveOnError, el, Alpine, cleanup) => {
         Alpine.bind(el, {
             'x-init'() {
-                this._zSetupListeners(event)
+                this._zSetupListeners(event, reactiveOnError)
                 cleanup(() => this._zCleanListeners());
             },
             'x-data'() {
                 return {
                     _zEventListeners: [],
-                    _zSetupListeners(event) {
+                    _zSetupListeners(event, reactiveOnError) {
                         Array.from(this.$root.querySelectorAll('[x-model]'))
                             .forEach((input) => {
                                 const field = input.getAttribute('x-model');
@@ -215,6 +215,19 @@ const zValidation = (Alpine) => {
                                 });
 
                                 this._zEventListeners.push({field, listener, event: event});
+
+                                //Input listener if event is not input and field already has an error
+                                if (event !== 'input' && reactiveOnError) {
+                                    const inputListener = input.addEventListener('input', () => {
+                                        this.$nextTick(() => {
+                                            if(this.zIsInvalid(field)) {
+                                                this.zValidateOnly(field);
+                                            }
+                                        });
+                                    });
+
+                                    this._zEventListeners.push({field, listener: inputListener, event: 'input'});
+                                }
                             });
                     },
                     _zCleanupListeners() {
@@ -243,7 +256,9 @@ const zValidation = (Alpine) => {
         }
 
         if (modifiers.includes('listen') && expression) {
-            bindEventListeners(expression, el, Alpine, cleanup);
+            const eventToListen = expression;
+            const reactiveOnError = modifiers.includes('reactive');
+            bindEventListeners(eventToListen, reactiveOnError, el, Alpine, cleanup);
         }
 
     }).before('bind');
