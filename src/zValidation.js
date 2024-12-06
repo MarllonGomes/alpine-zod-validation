@@ -1,8 +1,7 @@
 import {z, ZodType, ZodObject} from 'zod';
 import {merge} from 'lodash';
 
-const zValidation = function (Alpine) {
-
+const zValidation = (Alpine) => {
 
     const getEntangledModels = (el) => {
         const xDataString = el.getAttribute('x-data');
@@ -33,7 +32,7 @@ const zValidation = function (Alpine) {
         return mappedErrors
     }
 
-    const bindLivewireV3Hook = () => {
+    const bingLivewireCommitHook = () => {
         Livewire.hook('commit', ({component, succeed}) => {
             succeed(({snapshot}) => {
                 try {
@@ -60,7 +59,7 @@ const zValidation = function (Alpine) {
     }
 
 
-    function checkEntangledCompatibility() {
+    const checkEntangledCompatibility = () => {
         if (typeof Livewire === 'undefined') {
             console.warn('zValidation: Livewire is not defined. Make sure you have Livewire installed and initialized to use entangled modifier.');
             return false;
@@ -74,7 +73,7 @@ const zValidation = function (Alpine) {
         return true;
     }
 
-    function setupWatchers(event, el, Alpine) {
+    const setupListeners = (event, el, Alpine) => {
         return Array.from(el.querySelectorAll('[x-model]'))
             .map(input => {
                 const field = input.getAttribute('x-model');
@@ -86,13 +85,13 @@ const zValidation = function (Alpine) {
             })
     }
 
-    const clearWatchers = (listeners) => {
+    const cleanListeners = (listeners) => {
         listeners.forEach(({ field, listener, event }) => {
             field.removeEventListener(event, listener);
         });
     }
 
-    function bindComponentHelpers(el, Alpine) {
+    const bindComponentHelpers = (el, Alpine) => {
         Alpine.bind(el, {
             'x-init'() {
                 this._zCheckZodSchema();
@@ -224,12 +223,12 @@ const zValidation = function (Alpine) {
             modifiers.includes('entangled') &&
             checkEntangledCompatibility()
         ) {
-            bindLivewireV3Hook();
+            bingLivewireCommitHook();
         }
 
-        if (modifiers.includes('watch') && expression) {
-            const listeners = setupWatchers(expression, el, Alpine);
-            cleanup(() => clearWatchers(listeners));
+        if (modifiers.includes('listen') && expression) {
+            const listeners = setupListeners(expression, el, Alpine);
+            cleanup(() => cleanListeners(listeners));
         }
 
     }).before('bind');
