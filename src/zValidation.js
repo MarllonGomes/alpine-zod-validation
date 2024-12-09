@@ -175,6 +175,9 @@ const zValidation = (Alpine) => {
                     zAllErrors() {
                         return this.zFormState.errors;
                     },
+                    zHasErrors() {
+                        return Object.keys(this.zFormState.errors).length > 0;
+                    },
                     zAllSuccesses() {
                         return this.zFormState.successes;
                     },
@@ -185,9 +188,11 @@ const zValidation = (Alpine) => {
                     zValidate() {
                         this.zReset();
                         this._zProcessZodValidation();
+                        return !this.zHasErrors();
                     },
                     zValidateOnly(field) {
                         this._zProcessZodFieldValidation(field);
+                        return !this.zIsInvalid(field);
                     }
                 };
             }
