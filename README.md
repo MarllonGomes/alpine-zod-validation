@@ -178,7 +178,7 @@ Once you add the x-zvalidation directive to your component, it will add some met
 | zGetErrorsFor('field')  | string[]          | Gets all error messages for a specific field, returns an array.                                   |
 | zAllErrors()            | {field: string[]} | Gets all error messages, returns an object.                                                       |
 | zHasErrors()            | boolean           | Checks if the form has any errors, returns a boolean.                                             |
-| zAllSuccesses()         | {field: boolean}  | Checks if the form has any errors, returns an object.                                             |
+| zAllSuccesses()         | {field: boolean}  | Checks if the form has any successes, returns an object.                                             |
 | zValidate()             | boolean           | Checks if the form is valid or not, returns a boolean.                                            |
 | zValidateOnly('field')  | boolean           | Checks if a specific field is valid or not, returns a boolean.                                    |
 | zReset()                | void              | Resets the form validation state.                                                                 |
