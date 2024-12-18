@@ -6581,7 +6581,7 @@ const Hv = (u) => {
   }, v = (m, E, b, R, F) => {
     R.bind(b, {
       "x-init"() {
-        this._zSetupListeners(m, E), F(() => this._zCleanListeners());
+        this._zSetupListeners(m, E), F(() => this._zCleanupListeners());
       },
       "x-data"() {
         return {
