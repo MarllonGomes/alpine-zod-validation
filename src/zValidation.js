@@ -203,7 +203,6 @@ const zValidation = (Alpine) => {
         Alpine.bind(el, {
             'x-init'() {
                 this._zSetupListeners(event, reactiveOnError)
-                cleanup(() => this._zCleanupListeners());
             },
             'x-data'() {
                 return {
@@ -234,11 +233,6 @@ const zValidation = (Alpine) => {
                                     this._zEventListeners.push({field, listener: inputListener, event: 'input'});
                                 }
                             });
-                    },
-                    _zCleanupListeners() {
-                        this._zEventListeners.forEach(({field, listener, event}) => {
-                            field.removeEventListener(event, listener);
-                        });
                     }
                 }
             }
