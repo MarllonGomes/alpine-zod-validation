@@ -1,5 +1,5 @@
-import {z, ZodType, ZodObject} from 'zod';
-import {merge} from 'lodash';
+import { z, ZodType, ZodObject } from 'zod';
+import { merge } from 'lodash';
 
 const zValidation = (Alpine) => {
 
@@ -33,8 +33,8 @@ const zValidation = (Alpine) => {
     }
 
     const bingLivewireCommitHook = () => {
-        Livewire.hook('commit', ({component, succeed}) => {
-            succeed(({snapshot}) => {
+        Livewire.hook('commit', ({ component, succeed }) => {
+            succeed(({ snapshot }) => {
                 try {
                     const errors = JSON.parse(snapshot).memo.errors;
                     const childComponents = component.el.querySelectorAll('[x-data]');
@@ -87,7 +87,7 @@ const zValidation = (Alpine) => {
                      */
                     //zSchema: undefined,
 
-                    zFormState: {errors: {}, successes: {}}, // Form state
+                    zFormState: { errors: {}, successes: {} }, // Form state
 
                     _zCheckZodSchema() {
                         if (typeof this.zSchema === 'undefined') {
@@ -122,7 +122,6 @@ const zValidation = (Alpine) => {
                         }, {});
                     },
                     _zProcessZodValidation() {
-
                         const result = this.zSchema.safeParse(this);
                         if (result.success) {
                             this.zFormState.errors = {};
@@ -138,6 +137,12 @@ const zValidation = (Alpine) => {
                         return false;
                     },
 
+                    _zSilentZodValidation() {
+                        const result = this.zSchema.safeParse(this);
+                        this._zLastSilentValidation = result.success;
+                        return result.success;
+                    },
+
                     _zProcessZodFieldValidation(field) {
                         const fieldSchema = this.zSchema.shape[field] ?? null;
                         if (!fieldSchema) {
@@ -146,6 +151,8 @@ const zValidation = (Alpine) => {
                         }
 
                         const result = fieldSchema.safeParse(this[field]);
+                        this._zSilentZodValidation();
+
                         if (result.success) {
                             delete this.zFormState.errors[field];
                             this.zFormState.successes[field] = true;
@@ -184,15 +191,20 @@ const zValidation = (Alpine) => {
                     zReset() {
                         this.zFormState.errors = {};
                         this.zFormState.successes = [];
+                        this._zLastSilentValidation = null;
                     },
                     zValidate() {
                         this.zReset();
-                        this._zProcessZodValidation();
-                        return !this.zHasErrors();
+                        this._zSilentZodValidation();
+                        const result = this._zProcessZodValidation();
+                        return result;
                     },
                     zValidateOnly(field) {
-                        this._zProcessZodFieldValidation(field);
-                        return !this.zIsInvalid(field);
+                        const result = this._zProcessZodFieldValidation(field);
+                        return result;
+                    },
+                    zIsFormValid() {
+                        return this._zLastSilentValidation ?? this._zSilentZodValidation();
                     }
                 };
             }
@@ -218,19 +230,19 @@ const zValidation = (Alpine) => {
                                     this.$nextTick(() => this.zValidateOnly(field));
                                 });
 
-                                this._zEventListeners.push({field, listener, event: event});
+                                this._zEventListeners.push({ field, listener, event: event });
 
                                 //Input listener if event is not input and field already has an error
                                 if (event !== 'input' && reactiveOnError) {
                                     const inputListener = input.addEventListener('input', () => {
                                         this.$nextTick(() => {
-                                            if(this.zIsInvalid(field)) {
+                                            if (this.zIsInvalid(field)) {
                                                 this.zValidateOnly(field);
                                             }
                                         });
                                     });
 
-                                    this._zEventListeners.push({field, listener: inputListener, event: 'input'});
+                                    this._zEventListeners.push({ field, listener: inputListener, event: 'input' });
                                 }
                             });
                     }
@@ -242,7 +254,7 @@ const zValidation = (Alpine) => {
 
     Alpine.magic('z', () => z);
 
-    Alpine.directive('zvalidation', (el, {modifiers, expression}, {cleanup}) => {
+    Alpine.directive('zvalidation', (el, { modifiers, expression }, { cleanup }) => {
 
 
         bindComponentHelpers(el, Alpine);
@@ -263,4 +275,4 @@ const zValidation = (Alpine) => {
     }).before('bind');
 }
 
-export {zValidation}
+export { zValidation }
