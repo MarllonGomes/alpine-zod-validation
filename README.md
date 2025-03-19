@@ -1,194 +1,168 @@
 # Alpine.js Zod Validation
 
-Is an integration between [Alpine.js](https://www.npmjs.com/package/alpinejs) and [Zod](https://www.npmjs.com/package/zod) for form validation.
-This library allows you to define validation schemas using Zod and apply them directly in your Alpine.js components with ease.
+🚀 A powerful integration between [Alpine.js](https://www.npmjs.com/package/alpinejs) and [Zod](https://www.npmjs.com/package/zod) for seamless form validation. Define validation schemas using Zod and apply them directly in your Alpine.js components with minimal effort.
 
-## Table of Contents
+## 📋 Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
+- [Quick Start](#quick-start)
+- [Core Concepts](#core-concepts)
+- [API Reference](#api-reference)
+- [Advanced Features](#advanced-features)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Installation
+## 🚀 Installation
 
-#### As a npm module + bundler
-
-Install the package via npm:
+### NPM + Bundler
 
 ```bash
-$ npm i @mfgomess/alpine-zod-validation
+npm install @mfgomess/alpine-zod-validation
 ```
 
-Import the package in your project and start using it:
+Import and initialize:
 
 ```javascript
 import Alpine from 'alpinejs';
-import {zValidation} from 'alpine-zod-validation';
+import { zValidation } from '@mfgomess/alpine-zod-validation';
 
 window.Alpine = Alpine;
 Alpine.plugin(zValidation);
 Alpine.start();
 ```
 
-#### Use it from CDN
+### CDN
 
 ```html
-
-<script type="module" defer src="https://unpkg.com/@mfgomess/alpine-zod-validation/dist/cdn.js"/>
+<script type="module" defer src="https://unpkg.com/@mfgomess/alpine-zod-validation/dist/cdn.js"></script>
 <script src="//unpkg.com/alpinejs" defer></script>
 ```
 
-## Usage
+## 🚦 Quick Start
 
-To use validation you should apply the 'x-zvalidation' directive
-to your alpinejs component, and define a 'zSchema' property with your Zod schema,
-then you can use the validation methods provided by this plugin.
+Here's a simple example to get you started:
+
+```html
+<form
+    x-data="{
+        email: '',
+        password: '',
+        zSchema: $z.object({
+            email: $z.string().email(),
+            password: $z.string().min(8)
+        })
+    }"
+    x-zvalidation
+    @submit.prevent="zValidate() && $event.target.submit()"
+>
+    <input 
+        type="email" 
+        x-model="email"
+        :class="{ 'error': zIsInvalid('email') }"
+    />
+    <span x-show="zIsInvalid('email')" x-text="zFirstErrorFor('email')"></span>
+
+    <input 
+        type="password" 
+        x-model="password"
+        :class="{ 'error': zIsInvalid('password') }"
+    />
+    <span x-show="zIsInvalid('password')" x-text="zFirstErrorFor('password')"></span>
+
+    <button type="submit" :disabled="zHasErrors()">Submit</button>
+</form>
+```
+
+## 🎯 Core Concepts
 
 ### Directives
-- x-zvalidation: Directive to apply validation to the component.
-- .listen: Modifier to listen to a specific event in child elements.
-- .reactive: To validate on input event after the first validation error occurred.
-- .entangled: To sync livewire validation errors with entangled properties of the component.
+
+| Directive | Description |
+|-----------|-------------|
+| `x-zvalidation` | Main directive to enable validation on a component |
+| `.listen` | Modifier to validate on specific events (e.g., `x-zvalidation.listen="change"`) |
+| `.reactive` | Enables real-time validation after first error |
+| `.entangled` | Syncs with Livewire validation errors |
 
 ### Magic Properties
-- $z: Magic method of Zod object instance.
+
+- `$z`: Direct access to Zod for schema definition
+
+## 📚 API Reference
+
+### Validation Methods
+
+| Method | Parameters | Return Type | Description |
+|--------|------------|-------------|-------------|
+| `zValidate()` | - | `boolean` | Validates entire form against schema. Returns `true` if valid. |
+| `zValidateOnly(field)` | `string` | `boolean` | Validates a single field. Returns `true` if valid. |
+| `zIsFormValid()` | - | `boolean` | Silently Checks if entire form is currently valid without triggering errors (usefull to enable/disable submit buttons). |
+| `zReset()` | - | `void` | Resets all validation state. |
+
+### Error Handling
+
+| Method | Parameters | Return Type | Description |
+|--------|------------|-------------|-------------|
+| `zIsValid(field)` | `string` | `boolean` | Checks if field is valid (after validation). |
+| `zIsInvalid(field)` | `string` | `boolean` | Checks if field has validation errors. |
+| `zFirstErrorFor(field)` | `string` | `string\|null` | Returns first error message for field. |
+| `zGetErrorsFor(field)` | `string` | `string[]` | Returns all error messages for field. |
+| `zAllErrors()` | - | `Object` | Returns all validation errors. |
+| `zHasErrors()` | - | `boolean` | Checks if form has any errors. |
+| `zAllSuccesses()` | - | `Object` | Returns validation success state for all fields. |
+
+## 🔥 Advanced Features
+
+### Event-Based Validation
+
+Validate fields on specific events:
 
 ```html
-
 <form
-    @submit.prevent="save"
-    x-zvalidation.entangled.reactive.listen="change"
-    x-data="{
-        name: @entangle('clientData.name'), // Livewire entangled property
-        zSchema: $z.object({ 
-            name: $z.string().min(3), 
-            email: $z.string().email() 
-        }),
-        save() {
-            if(this.zValidate()) {
-                console.log('Form is valid');
-            }
-        }
-    }"
+    x-zvalidation.listen="change"
+    x-data="{ /* ... */ }"
 >
-    <input
-        type="text"
-        x-model="name"
-        x-bind:class="{ 
-            'errored': zIsInvalid('name'), 
-            'success': zIsValid('name') 
-        }"
-    />
-    <span x-show="zIsInvalid('name')" x-text="zFirstErrorFor('name')"></span>
-    <button type="submit">Submit</button>
+    <!-- Validates on change event -->
 </form>
 ```
 
-## Features
+### Reactive Validation
 
-### On-event validation
-
-You can add a .listen modifier and an event to the x-validation directive,
-it will listen to this occurred in child html elements with x-model
-directive and validate only this for field property.
+Enable real-time validation after first error:
 
 ```html
-
 <form
-    x-zvalidation.listen="input"
-    x-data="{ name: '', zSchema: $z.object({ name: $z.string().min(3) }) }"
+    x-zvalidation.listen.reactive="change"
+    x-data="{ /* ... */ }"
 >
-    <!-- The field name will be validated when the input event is triggered -->
-    <input type="text" x-model="name"/>
+    <!-- Switches to input event validation after first error -->
 </form>
 ```
 
-### Reactive validation
+### Livewire Integration
 
-Once you use a .listen modifier to validate on change or blur events, it will validate the field only
-when you change the value, and it will keep the error status until the user trigger the change event again.
-With .reactive modifier it will **modify the validation to input event after the first validation error occurred** in the field.
+Sync validation with Livewire components:
 
 ```html
-
 <form
-    x-zvalidation.listen.reactive="input"
-    x-data="{ name: '', zSchema: $z.object({ name: $z.string().min(3) }) }"
->
-    <!-- The field name will be validated when the input event is triggered -->
-    <input type="text" x-model="name"/>
-</form>
-```
-
-### Livewire entangled validation
-
-Once you add a .entangled modifier to the x-validation directive,
-it will sync the validation errors with the entangled properties of the component.
-
-If Livewire return validation errors for entangled properties, they will be
-synced with the x-zvalidation errors and the field will be marked as invalid.
-
-**Note:** It will already map the errors to the entangled properties, so you don't need to keep the livewire and alpinejs properties with same keys.
-
-```html
-
-<form
-    x-zvalidation.entangled.listen="input"
+    x-zvalidation.entangled
     x-data="{ 
-        name: @entangle('name'),
-        phone: @entangle('client.phone'), 
+        name: @entangle('clientData.name'),
         zSchema: $z.object({ 
-            name: $z.string().min(3),
-            phone: $z.string().min(10)
-        }) 
+            name: $z.string().min(3)
+        })
     }"
 >
-    <!-- The field name will be validated when the input event is triggered -->
-    <input type="text" x-model="name"/>
-
-    <!-- The field phone will be validated when the input event is triggered -->
-    <input type="text" x-model="phone"/>
-
-    <!-- Once you validate the form with Livewire "save" method, the errors will be synced with Alpine.js if exists -->
-    <button
-        x-bind:disabled="zHasErrors()"
-        wire:click.prevent="save"
-    >Submit
-    </button>
+    <!-- Syncs with Livewire validation -->
 </form>
 ```
 
-### $z magic method
+## 🤝 Contributing
 
-The $z magic method is just a shortcut to the Zod object, you can use it to define your validation schema in a more readable way.
+We welcome contributions! Please feel free to submit a Pull Request.
 
-[Check Zod documentation](https://www.npmjs.com/package/zod) for more information about Zod.
+## 📄 License
 
-### x-zvalidation directive methods added to the component
-
-Once you add the x-zvalidation directive to your component, it will add some methods to the component instance to help you with the validation.
-
-| Method                  | Return Type       | Description                                                                                       |
-|-------------------------|-------------------|---------------------------------------------------------------------------------------------------|
-| zIsValid('field')       | boolean           | Checks if a specific field is valid, returns a boolean. (Triggered only after the field is dirty) |
-| zIsInvalid('field')     | boolean           | Checks if a specific field is invalid, returns a boolean.                                         |
-| zFirstErrorFor('field') | ?string           | Gets the error message of a specific field, returns a string.                                     |
-| zGetErrorsFor('field')  | string[]          | Gets all error messages for a specific field, returns an array.                                   |
-| zAllErrors()            | {field: string[]} | Gets all error messages, returns an object.                                                       |
-| zHasErrors()            | boolean           | Checks if the form has any errors, returns a boolean.                                             |
-| zAllSuccesses()         | {field: boolean}  | Checks if the form has any successes, returns an object.                                             |
-| zValidate()             | boolean           | Checks if the form is valid or not, returns a boolean.                                            |
-| zValidateOnly('field')  | boolean           | Checks if a specific field is valid or not, returns a boolean.                                    |
-| zReset()                | void              | Resets the form validation state.                                                                 |
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome.
-
-## License
-
-MIT
+MIT Licensed. Enjoy building awesome forms!
 
 
