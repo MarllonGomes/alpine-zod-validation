@@ -139,7 +139,6 @@ const zValidation = (Alpine) => {
 
                     _zSilentZodValidation() {
                         const result = this.zSchema.safeParse(this);
-                        this._zLastSilentValidation = result.success;
                         return result.success;
                     },
 
@@ -191,7 +190,6 @@ const zValidation = (Alpine) => {
                     zReset() {
                         this.zFormState.errors = {};
                         this.zFormState.successes = [];
-                        this._zLastSilentValidation = null;
                     },
                     zValidate() {
                         this.zReset();
@@ -204,7 +202,7 @@ const zValidation = (Alpine) => {
                         return result;
                     },
                     zIsFormValid() {
-                        return this._zLastSilentValidation ?? this._zSilentZodValidation();
+                        return this._zSilentZodValidation();
                     }
                 };
             }
