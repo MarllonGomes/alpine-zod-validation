@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="pt_BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
     <title>AlpineJS Validation</title>
     <style>
         .errored {
@@ -16,12 +20,13 @@
         }
     </style>
 </head>
+
 <body>
 
-<form
-    style="display: flex; flex-direction: column; gap: 10px; width: 300px;"
-    x-zvalidation.listen="input"
-    x-data="{
+    <form
+        style="display: flex; flex-direction: column; gap: 10px; width: 300px;"
+        x-zvalidation.listen="input"
+        x-data="{
         zSchema: $z.object({ name: $z.string().min(3), email: $z.string().email('Digite um e-mail válido') }),
         name: '',
         email: '',
@@ -29,52 +34,78 @@
             this.zValidate();
         }
     }"
-    @submit.prevent="save"
->
-    <input
-        type="text"
-        placeholder="nome"
-        x-model="name"
-        :class="{ errored: zIsInvalid('name'), success: zIsValid('name') }"
-    />
-    <span x-show="zIsInvalid('name')" x-text="zFirstErrorFor('name')"></span>
-    <span x-show="zIsValid('name')" x-text="'successo'"></span>
-
-    <input
-        type="text"
-        placeholder="email"
-        x-model="email"
-        :class="{ errored: zIsInvalid('email'), success: zIsValid('email') }"
-    />
-    <span x-show="zIsInvalid('email')" x-text="zFirstErrorFor('email')"></span>
-    <span x-show="zIsValid('email')" x-text="'successo'"></span>
-
-
-    <h3>Nested example</h3>
-    <div
-        x-zvalidation.listen="input"
-        x-data="{
-            zSchema: $z.object({ nestedName: $z.string().min(3) }),
-            nestedName: ''
-        }">
+        @submit.prevent="save"
+    >
         <input
             type="text"
-            placeholder="nested name"
-            x-model="nestedName"
-            :class="{
+            placeholder="nome"
+            x-model="name"
+            :class="{ errored: zIsInvalid('name'), success: zIsValid('name') }"
+        />
+        <span
+            x-show="zIsInvalid('name')"
+            x-text="zFirstErrorFor('name')"
+        ></span>
+        <span
+            x-show="zIsValid('name')"
+            x-text="'successo'"
+        ></span>
+
+        <input
+            type="text"
+            placeholder="email"
+            x-model="email"
+            :class="{ errored: zIsInvalid('email'), success: zIsValid('email') }"
+        />
+        <span
+            x-show="zIsInvalid('email')"
+            x-text="zFirstErrorFor('email')"
+        ></span>
+        <span
+            x-show="zIsValid('email')"
+            x-text="'successo'"
+        ></span>
+
+
+        <h3>Nested example</h3>
+        <div
+            x-zvalidation.listen="input"
+            x-data="{
+            zSchema: $z.object({ nestedName: $z.string().min(3) }),
+            nestedName: ''
+        }"
+        >
+            <input
+                type="text"
+                placeholder="nested name"
+                x-model="nestedName"
+                :class="{
                 'errored': zIsInvalid('nestedName'),
                 'success': zIsValid('nestedName')
             }"
-        />
-        <span x-show="zIsInvalid('nestedName')" x-text="zFirstErrorFor('nestedName')"></span>
-        <span x-show="zIsValid('nestedName')" x-text="'successo'"></span>
-    </div>
+            />
+            <span
+                x-show="zIsInvalid('nestedName')"
+                x-text="zFirstErrorFor('nestedName')"
+            ></span>
+            <span
+                x-show="zIsValid('nestedName')"
+                x-text="'successo'"
+            ></span>
+        </div>
 
 
-    <button type="submit">Submit</button>
-</form>
+        <button type="submit">Submit</button>
+    </form>
 
-<script type="module" src="/builds/cdn.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.6/dist/cdn.min.js"></script>
+    <script
+        type="module"
+        src="/builds/cdn.js"
+    ></script>
+    <script
+        defer
+        src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.6/dist/cdn.min.js"
+    ></script>
 </body>
+
 </html>
